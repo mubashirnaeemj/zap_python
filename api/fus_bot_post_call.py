@@ -35,7 +35,7 @@ def get_sheets_client():
 async def handle_post_call(request: Request):
     try:
         data = await request.json()
-        
+        print(data)
         # 1. Extract Metadata from ElevenLabs Webhook
         metadata = data.get("metadata", {})
         duration = int(metadata.get("call_duration_secs", 0))
