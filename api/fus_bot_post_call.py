@@ -36,16 +36,26 @@ async def handle_post_call(request: Request):
     try:
         data = await request.json()
         print(data)
+
+        # ✅ FIX: everything is inside "data"
+        payload = data.get("data", {})
+
         # 1. Extract Metadata from ElevenLabs Webhook
-        metadata = data.get("metadata", {})
+        metadata = payload.get("metadata", {})
         duration = int(metadata.get("call_duration_secs", 0))
-        call_status = data.get("status", "unknown")
-        transcript = data.get("transcript", "No transcript available")
+        call_status = payload.get("status", "unknown")
+
+        # ✅ FIX: transcript is a list → convert to string
+        transcript = payload.get("transcript", [])
+        import json
+        transcript_str = json.dumps(transcript) if transcript else "No transcript available"
         
         # Extract variables passed during call initiation
-        custom_data = data.get("conversation_initiation_client_data", {}).get("dynamic_variables", {})
+        custom_data = payload.get("conversation_initiation_client_data", {}).get("dynamic_variables", {})
         lead_id = custom_data.get("lead_id")
-        conv_id = data.get("conversation_id")
+
+        # ✅ FIX: conversation_id is inside payload
+        conv_id = payload.get("conversation_id")
 
         if not lead_id:
             logging.error("Post-Call received but no lead_id found.")
@@ -59,7 +69,7 @@ async def handle_post_call(request: Request):
         sf_payload = {
             "Call_Duration__c": f"{duration} seconds",
             "Call_Status__c": call_status,
-            "Call_Transcript__c": transcript
+            "Call_Transcript__c": transcript_str  # ✅ FIX applied
         }
 
         async with httpx.AsyncClient() as client:
@@ -81,15 +91,15 @@ async def handle_post_call(request: Request):
             
             # Prepare the row exactly as your old Zapier workflow did
             row = [
-                conv_id,                                      # Column A: Call ID
-                lead_info.get("Name", "N/A"),                 # Column B: Lead Name
-                lead_info.get("Who_manages_the_property__c"), # Column C: ACQ Manager
-                lead_info.get("Address", "N/A"),              # Column D: Property Address
-                f"{duration}s",                               # Column E: Call Duration
-                lead_info.get("Change_of_Mind_Reason__c"),    # Column F: Reason (from Tool)
-                lead_info.get("Is_Interested_in_Selling__c"), # Column G: Interested (from Tool)
-                lead_info.get("Check_Back_Time__c"),          # Column H: Callback Time
-                f"https://leftmain-4606.lightning.force.com/lightning/r/Lead/{lead_id}/view" # Column I: Link
+                conv_id,
+                lead_info.get("Name", "N/A"),
+                lead_info.get("Who_manages_the_property__c"),
+                lead_info.get("Address", "N/A"),
+                f"{duration}s",
+                lead_info.get("Change_of_Mind_Reason__c"),
+                lead_info.get("Is_Interested_in_Selling__c"),
+                lead_info.get("Check_Back_Time__c"),
+                f"https://leftmain-4606.lightning.force.com/lightning/r/Lead/{lead_id}/view"
             ]
             
             sheet.append_row(row)
