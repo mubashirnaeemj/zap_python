@@ -94,12 +94,12 @@ async def handle_post_call(request: Request):
 
         if not lead_id:
             raise HTTPException(status_code=400, detail="Missing lead_id")
-
+        logger.info(f"Extracted data - Lead ID: {lead_id}, Duration: {duration}s, Status: {call_status}")
         # ------------------- SALESFORCE -------------------
         access_token = await get_sf_access_token()
 
         headers = {"Authorization": f"Bearer {access_token}"}
-
+        logger.info("Updating Salesforce lead with call data...")
         sf_payload = {
             "Call Duration": 49,
             "Call Status": "done",
@@ -108,13 +108,12 @@ async def handle_post_call(request: Request):
 
         async with get_client() as client:
             update_url = f"{SF_INSTANCE_URL}/services/data/v57.0/sobjects/Lead/{lead_id}"
-
+            logger.info(f"PATCH URL: {update_url}")
             # PATCH
             await safe_request(client, "PATCH", update_url, json=sf_payload, headers=headers)
-
+            logger.info("Salesforce lead updated successfully.")
             # GET
             res = await client.patch(update_url, json=sf_payload, headers=headers)
-
             logger.info("STATUS:", res.status_code)
             logger.info("RESPONSE:", res.text)
             lead_info = res.json()

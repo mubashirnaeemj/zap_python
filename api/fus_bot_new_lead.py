@@ -47,7 +47,7 @@ async def safe_request(client, method, url, **kwargs):
 # ------------------- SALESFORCE TOKEN -------------------
 async def get_sf_access_token():
     url = "https://login.salesforce.com/services/oauth2/token"
-
+    logger.info("Requesting Salesforce access token...")
     async with get_client() as client:
         res = await safe_request(
             client,
@@ -60,10 +60,10 @@ async def get_sf_access_token():
                 "refresh_token": SF_REFRESH_TOKEN
             }
         )
-
+        logger.info("Salesforce token received.")
         data = res.json()
         token = data.get("access_token")
-
+        logger.info(f"Salesforce token: {'***' + token[-4:] if token else 'None'}")
         if not token:
             raise RuntimeError("Salesforce token missing")
 
