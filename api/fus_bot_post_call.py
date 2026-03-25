@@ -115,8 +115,8 @@ async def handle_post_call(request: Request):
             # GET
             res = await client.patch(update_url, json=sf_payload, headers=headers)
 
-            print("STATUS:", res.status_code)
-            print("RESPONSE:", res.text)
+            logger.info("STATUS:", res.status_code)
+            logger.info("RESPONSE:", res.text)
             lead_info = res.json()
 
         # ------------------- GOOGLE SHEETS (ASYNC SAFE) -------------------
