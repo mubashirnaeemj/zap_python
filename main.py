@@ -25,7 +25,7 @@ def startup_event():
 
 app.include_router(LeadRouter, prefix="/api/leads", tags=["Lead Processing"])
 app.include_router(CallEndRouter, prefix="/api/callback", tags=["Call Analysis"])
-app.include_router(PostCallRouter, prefix="/api/callback", tags=["Post-Call Logging"])
+app.include_router(PostCallRouter, prefix="/api/postcall", tags=["Post-Call Logging"])
 
 # --- CONFIGURATION ENDPOINTS ---
 
