@@ -1,12 +1,15 @@
 import os
+from dotenv import load_dotenv
 
-# API Keys & Secrets
-ADMIN_SECRET_KEY = "12345678" 
-SF_REFRESH_TOKEN = "YOUR_SF_REFRESH_TOKEN"
-SF_INSTANCE_URL = "https://leftmain-4606.lightning.force.com/"
+load_dotenv()
 
-ELEVEN_LABS_KEY = "sk_2c83ea518c2865448915d6d42e7c1149a7000de253743c7f"
-ELEVEN_AGENT_ID = "agent_6901kh8qcn0ye0na34bt7t5t72ee"
+# API Keys & Secrets (loaded from .env)
+ADMIN_SECRET_KEY = os.getenv("ADMIN_SECRET_KEY")
+SF_REFRESH_TOKEN = os.getenv("SF_REFRESH_TOKEN")
+SF_INSTANCE_URL = os.getenv("SF_INSTANCE_URL")
+
+ELEVEN_LABS_KEY = os.getenv("ELEVEN_LABS_KEY")
+ELEVEN_AGENT_ID = os.getenv("ELEVEN_AGENT_ID")
 
 # Mapping logic
 AREA_CODE_MAP = {
