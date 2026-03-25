@@ -6,7 +6,11 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from config.config import *
 from config.database import get_row_limit
+from dotenv import load_dotenv
 
+load_dotenv()
+SF_CLIENT_ID = os.getenv("SF_CLIENT_ID")
+SF_CLIENT_SECRET = os.getenv("SF_CLIENT_SECRET")
 Router = APIRouter()
 
 @Router.post("/trigger")

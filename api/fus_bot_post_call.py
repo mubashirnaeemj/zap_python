@@ -1,8 +1,10 @@
 import logging
+import os
 import httpx
 import gspread
 from fastapi import APIRouter, Request
 from oauth2client.service_account import ServiceAccountCredentials
+from pydantic import json
 from config.config import SF_INSTANCE_URL
 from api.fus_bot_new_lead import get_sf_access_token
 
@@ -10,10 +12,23 @@ Router = APIRouter()
 
 # --- GOOGLE SHEETS SETUP ---
 def get_sheets_client():
-    """Authenticates using the service_account.json file."""
-    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    # Ensure the file is named exactly service_account.json in your project root
-    creds = ServiceAccountCredentials.from_json_keyfile_name("service_account.json", scope)
+    """Authenticates using service account JSON from env variable."""
+    
+    scope = [
+        "https://spreadsheets.google.com/feeds",
+        "https://www.googleapis.com/auth/drive"
+    ]
+
+    # Load JSON from Railway env variable
+    service_account_info = json.loads(
+        os.getenv("GOOGLE_SERVICE_ACCOUNT_JSON")
+    )
+
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(
+        service_account_info,
+        scope
+    )
+
     return gspread.authorize(creds)
 
 @Router.post("/post-call")
