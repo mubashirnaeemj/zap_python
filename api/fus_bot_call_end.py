@@ -55,7 +55,10 @@ async def handle_call_end(
         params = data.get("parameters", {})
         variables = data.get("conversation_initiation_client_data", {}).get("dynamic_variables", {})
 
-        lead_id = variables.get("lead_id")
+        lead_id = (
+                variables.get("lead_id") or
+                data.get("lead_id")  # fallback for flat payload
+            )
 
         if not lead_id:
             logger.error("Missing lead_id")
