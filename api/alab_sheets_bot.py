@@ -3,6 +3,7 @@ import os
 import re
 import json
 import requests
+from fastapi import Request
 import gspread
 from fastapi import APIRouter
 from google.oauth2.service_account import Credentials
@@ -244,17 +245,18 @@ async def trigger_calls():
 # ================= POST CALL =================
 
 @Router.post("/post-call")
-async def post_call_update(payload: dict):
+async def post_call_update(request: Request):
     try:
         logging.info("Post-call webhook received")
-        logging.info(f"Payload received: {payload}")
+        data = await request.json()
+        payload = data.get("data", {})
+        logging.info(f"Payload extracted: {payload}")
 
         client = get_client()
         sheet = client.open_by_key("1chCOCUqMtZ-q25b2mV1hiwoyx7jLLePFWPkOcCbr7mU").worksheet(ALAB_WORKSHEET_NAME)
 
         called_number = (
-            payload.get("data", {})
-            .get("conversation_initiation_client_data", {})
+            payload.get("conversation_initiation_client_data", {})
             .get("dynamic_variables", {})
             .get("system", {})
             .get("called_number")
