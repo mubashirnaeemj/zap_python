@@ -164,25 +164,24 @@ def log_to_sheets(lead_info, lead_id, duration, conv_id):
 
         logger.info("Google Sheets client initialized")
 
-        # SAFETY: convert None → ""
         def safe(val):
             return str(val) if val is not None else ""
 
         row = [
             safe(conv_id),
-            safe(lead_info.get("Name")),                     # ✅ FIXED
-            safe(lead_info.get("ACQ_Manager__c")),           # ✅ FIXED
-            safe(lead_info.get("Property_Address__c")),      # ✅ FIXED
+            safe(lead_info.get("Name")),
+            safe(lead_info.get("ACQ_Manager__c")),
+            safe(lead_info.get("Property_Address__c")),
             f"{duration}s",
-            safe(lead_info.get("Change_of_Mind_Reason__c")), # ✅ FIXED
-            safe(lead_info.get("Is_Interested__c")),         # ✅ FIXED
-            safe(lead_info.get("Checkback_Time__c")),        # ✅ FIXED
+            safe(lead_info.get("Change_of_Mind_Reason__c")),
+            safe(lead_info.get("Is_Interested__c")),
+            safe(lead_info.get("Checkback_Time__c")),
             f"https://leftmain-4606.lightning.force.com/lightning/r/Lead/{lead_id}/view"
         ]
 
-        logger.info(f"Appending row to sheet: {row}")
+        logger.info(f"Row before append: {row}")
 
-        sheet.append_row(row)
+        sheet.append_row(row, value_input_option="USER_ENTERED")
 
         logger.info(f"✅ Sheet updated for lead {lead_id}")
 
