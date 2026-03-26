@@ -84,45 +84,46 @@ async def handle_post_call(request: Request):
         transcript = payload.get("transcript", [])
         transcript_str = json.dumps(transcript) if transcript else "No transcript"
 
-        # ⚠️ prevent Salesforce field overflow
+        # Prevent Salesforce overflow (safe limit)
         transcript_str = transcript_str[:30000]
 
-        custom_data = payload.get("conversation_initiation_client_data", {}).get("dynamic_variables", {})
+        custom_data = payload.get("conversation_initiation_client_data", {}) \
+                             .get("dynamic_variables", {})
         lead_id = custom_data.get("lead_id")
-
         conv_id = payload.get("conversation_id")
 
         if not lead_id:
             raise HTTPException(status_code=400, detail="Missing lead_id")
-        logger.info(f"Extracted data - Lead ID: {lead_id}, Duration: {duration}s, Status: {call_status}")
+
+        logger.info(f"Extracted - Lead: {lead_id}, Duration: {duration}, Status: {call_status}")
+
         # ------------------- SALESFORCE -------------------
         access_token = await get_sf_access_token()
-
         headers = {"Authorization": f"Bearer {access_token}"}
-        logger.info("Updating Salesforce lead with call data...")
+
         sf_payload = {
-            "Call Duration": 49,
-            "Call Status": "done",
-            "Call Transcript": transcript_str
+            "Call_Duration__c": float(duration),
+            "Call_Status__c": call_status,
+            "Call_Transcript__c": transcript_str
         }
 
         async with get_client() as client:
             update_url = f"{SF_INSTANCE_URL}/services/data/v57.0/sobjects/Lead/{lead_id}"
             logger.info(f"PATCH URL: {update_url}")
-            # PATCH
-            await safe_request(client, "PATCH", update_url, json=sf_payload, headers=headers)
-            logger.info("Salesforce lead updated successfully.")
-            # GET
-            res = await client.patch(update_url, json=sf_payload, headers=headers)
-            logger.info("STATUS:", res.status_code)
-            logger.info("RESPONSE:", res.text)
-            lead_info = res.json()
+            logger.info(f"Payload: {sf_payload}")
 
-        # ------------------- GOOGLE SHEETS (ASYNC SAFE) -------------------
+            res = await client.patch(update_url, json=sf_payload, headers=headers)
+
+            logger.info(f"STATUS: {res.status_code}")
+            logger.info(f"RESPONSE: {res.text}")
+
+            if res.status_code >= 400:
+                raise Exception(f"Salesforce error: {res.text}")
+
+        # ------------------- GOOGLE SHEETS -------------------
         if duration > 180:
             logger.info(f"Logging to Google Sheets (duration: {duration}s)")
-
-            await asyncio.to_thread(log_to_sheets, lead_info, lead_id, duration, conv_id)
+            await asyncio.to_thread(log_to_sheets, {"id": lead_id}, lead_id, duration, conv_id)
 
         return {"status": "success", "duration": duration}
 
