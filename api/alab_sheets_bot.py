@@ -308,12 +308,12 @@ async def post_call_update(request: Request):
         logging.info(f"Metadata: {metadata}")
 
         sheet.update(f"L{row_id}", [["Answered"]])
-        sheet.update(f"Q{row_id}", [[pacific_time]])
-        sheet.update(f"R{row_id}", [[analysis.get("wrong_call", {}).get("value")]])
-        sheet.update(f"S{row_id}", [[analysis.get("Do they want to sell?", {}).get("value")]])
-        sheet.update(f"T{row_id}", [[analysis.get("call_back_time", {}).get("value")]])
-        sheet.update(f"U{row_id}", [[str(metadata.get("features_usage", {}).get("transfer_to_number", {}).get("used"))]])
-        sheet.update(f"V{row_id}", [[metadata.get("call_duration_secs")]])
+        sheet.update(f"M{row_id}", [[pacific_time]])
+        sheet.update(f"O{row_id}", [[analysis.get("wrong_call", {}).get("value")]])
+        sheet.update(f"P{row_id}", [[analysis.get("Do they want to sell?", {}).get("value")]])
+        sheet.update(f"Q{row_id}", [[analysis.get("call_back_time", {}).get("value")]])
+        sheet.update(f"R{row_id}", [[str(metadata.get("features_usage", {}).get("transfer_to_number", {}).get("used"))]])
+        sheet.update(f"T{row_id}", [[metadata.get("call_duration_secs")]])
 
         logging.info(f"Post-call update completed for row {row_id}")
 
