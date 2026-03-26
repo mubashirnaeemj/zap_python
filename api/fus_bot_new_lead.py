@@ -41,6 +41,7 @@ async def safe_request(client, method, url, **kwargs):
             res.raise_for_status()
             return res
         except Exception as e:
+            logger.error(f"Request failed (attempt {attempt + 1}): {str(e)}")
             if attempt == 2:
                 raise
             await asyncio.sleep(1 * (attempt + 1))
@@ -144,7 +145,7 @@ async def process_lead(client, lead, headers):
             json={
                 "agent_id": ELEVEN_AGENT_ID,
                 "agent_phone_number_id": from_phone,
-                "to_number": "+923152526525",
+                "to_number": digits,
                 "conversation_initiation_client_data": {
                     "dynamic_variables": {
                         "lead_id": lead["Id"],
@@ -156,7 +157,7 @@ async def process_lead(client, lead, headers):
         )
 
         # Update Salesforce
-        pacific_now = datetime.now(ZoneInfo("America/Los_Angeles")).strftime("%Y-%m-%d %H:%M:%S")
+        pacific_now = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.000+0000")
 
         update_url = f"{SF_INSTANCE_URL}/services/data/v57.0/sobjects/Lead/{lead['Id']}"
 
