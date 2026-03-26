@@ -152,22 +152,21 @@ def log_to_sheets(lead_info, lead_id, duration, conv_id):
     try:
         gs_client = get_sheets_client()
 
-        sheet = gs_client.open("Ai Bot FUS Discovery Call List").worksheet("Call Recording Metrics")
-
+        sheet = gs_client.open("Ai Bot FUS Discovery Call List").worksheet("Copy of Call Recording Metrics")
+        logging.info("Google Sheets client initialized")
         row = [
             conv_id,
-            lead_info.get("Name", "N/A"),
-            lead_info.get("Who_manages_the_property__c"),
-            lead_info.get("Address", "N/A"),
+            lead_info.get("Lead Name", "N/A"),
+            lead_info.get("ACQ Manager"),
+            lead_info.get("Property Address", "N/A"),
             f"{duration}s",
-            lead_info.get("Change_of_Mind_Reason__c"),
-            lead_info.get("Is_Interested_in_Selling__c"),
-            lead_info.get("Check_Back_Time__c"),
+            lead_info.get("Change of Mind Reason"),
+            lead_info.get("Is Interested?"),
+            lead_info.get("Checkback Time"),
             f"https://leftmain-4606.lightning.force.com/lightning/r/Lead/{lead_id}/view"
         ]
-
+        logger.info(f"Appending row to sheet: {row}")
         sheet.append_row(row)
-
         logger.info(f"Sheet updated for lead {lead_id}")
 
     except Exception as e:
