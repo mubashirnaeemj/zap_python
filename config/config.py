@@ -13,35 +13,59 @@ def get_env(key: str, required: bool = True, default=None):
     
     return value
 
+
 # ------------------- CONFIG CLASS -------------------
 
 class Settings:
-    # Admin
+    # ================= ADMIN =================
     ADMIN_SECRET_KEY: str = get_env("ADMIN_SECRET_KEY")
 
-    # Salesforce
+    # ================= SALESFORCE =================
     SF_REFRESH_TOKEN: str = get_env("SF_REFRESH_TOKEN")
     SF_INSTANCE_URL: str = get_env("SF_INSTANCE_URL")
     SF_CLIENT_ID: str = get_env("SF_CLIENT_ID")
     SF_CLIENT_SECRET: str = get_env("SF_CLIENT_SECRET")
 
-    # ElevenLabs
+    # ================= ELEVENLABS =================
     ELEVEN_LABS_KEY: str = get_env("ELEVEN_LABS_KEY")
     ELEVEN_AGENT_ID: str = get_env("ELEVEN_AGENT_ID")
+
+    # ================= GOOGLE =================
+    GOOGLE_SERVICE_ACCOUNT_FILE: str = get_env("GOOGLE_SERVICE_ACCOUNT_FILE")
+
+    # ================= SHEETS (ALAB) =================
+    ALAB_SPREADSHEET_NAME: str = get_env("ALAB_SPREADSHEET_NAME")
+    ALAB_WORKSHEET_NAME: str = get_env("ALAB_WORKSHEET_NAME")
+
+    # ================= MAPPER SHEET =================
+    MAPPER_SHEET_NAME: str = get_env("MAPPER_SHEET_NAME")
+    MAPPER_WORKSHEET_NAME: str = get_env("MAPPER_WORKSHEET_NAME")
+
 
 # Create a single config instance
 settings = Settings()
 
+
 # ------------------- SAFE EXPORTS -------------------
-# (So your old imports don't break)
 
 ADMIN_SECRET_KEY = settings.ADMIN_SECRET_KEY
+
 SF_REFRESH_TOKEN = settings.SF_REFRESH_TOKEN
 SF_INSTANCE_URL = settings.SF_INSTANCE_URL
 SF_CLIENT_ID = settings.SF_CLIENT_ID
 SF_CLIENT_SECRET = settings.SF_CLIENT_SECRET
+
 ELEVEN_LABS_KEY = settings.ELEVEN_LABS_KEY
 ELEVEN_AGENT_ID = settings.ELEVEN_AGENT_ID
+
+GOOGLE_SERVICE_ACCOUNT_FILE = settings.GOOGLE_SERVICE_ACCOUNT_FILE
+
+ALAB_SPREADSHEET_NAME = settings.ALAB_SPREADSHEET_NAME
+ALAB_WORKSHEET_NAME = settings.ALAB_WORKSHEET_NAME
+
+MAPPER_SHEET_NAME = settings.MAPPER_SHEET_NAME
+MAPPER_WORKSHEET_NAME = settings.MAPPER_WORKSHEET_NAME
+
 
 # ------------------- AREA CODE MAPPING -------------------
 

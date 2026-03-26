@@ -50,3 +50,6 @@
 * [ ] **Secret Key:** Create/move `service_account.json` into the root folder.
 * [ ] **Init Files:** Confirm empty `__init__.py` files exist in both `api/` and `config/` folders.
 
+alab_sheets_bot.py
+ELEVENLABS_API_KEY = "YOUR_API_KEY"
+AGENT_ID = "agent_6401kkp1zhqketvbbkqhc9jgnh4c" Usually correct (but confirm):

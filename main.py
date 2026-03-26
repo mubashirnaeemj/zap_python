@@ -10,6 +10,8 @@ from config.config import ADMIN_SECRET_KEY
 from api.fus_bot_new_lead import Router as LeadRouter
 from api.fus_bot_call_end import Router as CallEndRouter
 from api.fus_bot_post_call import Router as PostCallRouter
+from api.alab_sheets_bot import Router as AlabSheetsRouter
+
 
 # ------------------- LOGGING -------------------
 logging.basicConfig(
@@ -73,6 +75,7 @@ class ConfigUpdate(BaseModel):
 app.include_router(LeadRouter, prefix="/api/leads", tags=["Lead Processing"])
 app.include_router(CallEndRouter, prefix="/api/callback", tags=["Call Analysis"])
 app.include_router(PostCallRouter, prefix="/api/postcall", tags=["Post-Call Logging"])
+app.include_router(AlabSheetsRouter,prefix="/api/alab-sheets",tags=["ALab Sheets Bot"])
 
 # ------------------- CONFIG ENDPOINTS -------------------
 @app.get("/config", dependencies=[Depends(rate_limiter)])
