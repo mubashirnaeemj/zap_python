@@ -31,7 +31,7 @@ def get_client():
 # ---------- STEP 2 ----------
 def get_leads(limit=5):
     client = get_client()
-    sheet = client.open(ALAB_SPREADSHEET_NAME).worksheet(ALAB_WORKSHEET_NAME)
+    sheet = client.open_by_key("1chCOCUqMtZ-q25b2mV1hiwoyx7jLLePFWPkOcCbr7mU").worksheet(ALAB_WORKSHEET_NAME)
 
     records = sheet.get_all_records()
     leads = [r for r in records if r.get("Call Disposition") == "None"]
@@ -179,7 +179,7 @@ async def post_call_update(payload: dict):
         logging.info("Post-call webhook received")
 
         client = get_client()
-        sheet = client.open(ALAB_SPREADSHEET_NAME).worksheet(ALAB_WORKSHEET_NAME)
+        sheet = client.open_by_key("1chCOCUqMtZ-q25b2mV1hiwoyx7jLLePFWPkOcCbr7mU").worksheet(ALAB_WORKSHEET_NAME)
 
         called_number = (
             payload.get("data", {})
