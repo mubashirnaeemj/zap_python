@@ -1,7 +1,7 @@
 import logging
 import os
 import re
-from pydantic import json
+import json
 import requests
 import gspread
 from fastapi import APIRouter
